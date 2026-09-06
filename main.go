@@ -1,20 +1,12 @@
 package main
 
 import (
-	"fmt"
+	"os"
 
-	"github.com/notmithun/mdir/internal/filesystem"
-	"github.com/notmithun/mdir/internal/formatter"
+	"github.com/notmithun/mdir/internal/app"
 )
 
 func main() {
-	scanner := filesystem.NewScanner()
-
-	entries, err := scanner.Scan(".")
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-
-	formatter.PrintEntries(entries)
+	application := app.New()
+	application.Run(os.Args[1:])
 }
