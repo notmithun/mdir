@@ -8,7 +8,8 @@ const (
 )
 
 type Entry struct {
-	Name string
-	Type EntryType
-	Size int64
+	Name     string
+	Type     EntryType
+	Size     int64
+	Children []Entry
 }

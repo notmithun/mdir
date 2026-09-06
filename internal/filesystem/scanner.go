@@ -2,12 +2,14 @@ package filesystem
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/notmithun/mdir/internal/platform"
 )
 
 type ScanOptions struct {
-	All bool
+	All       bool
+	Recursive bool
 }
 
 type Scanner struct{}
@@ -17,6 +19,10 @@ func NewScanner() *Scanner {
 }
 
 func (s *Scanner) Scan(path string, options ScanOptions) ([]Entry, error) {
+	return s.scanDirectory(path, options)
+}
+
+func (s *Scanner) scanDirectory(path string, options ScanOptions) ([]Entry, error) {
 	dirEntries, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
@@ -35,6 +41,16 @@ func (s *Scanner) Scan(path string, options ScanOptions) ([]Entry, error) {
 
 		if dirEntry.IsDir() {
 			entry.Type = Directory
+			if options.Recursive {
+				childPath := filepath.Join(path, dirEntry.Name())
+
+				children, err := s.scanDirectory(childPath, options)
+				if err != nil {
+					continue
+				}
+
+				entry.Children = children
+			}
 		} else {
 			entry.Type = File
 
