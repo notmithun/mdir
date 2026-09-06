@@ -7,7 +7,7 @@ import (
 	"github.com/notmithun/mdir/internal/formatter"
 )
 
-const Version = "v2"
+const Version = "v1.5"
 
 type App struct {
 	Scanner *filesystem.Scanner
