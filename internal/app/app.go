@@ -11,6 +11,7 @@ const Version = "v1"
 
 type App struct {
 	Scanner *filesystem.Scanner
+	All bool
 }
 
 func New() *App {
@@ -29,7 +30,9 @@ func (a *App) Run(args []string) {
 			a.help()
 		case "-v", "-ver", "-version":
 			a.version()
-
+		case "-a", "-all":
+			a.All = true
+			a.list(".")
 		default:
 			a.list(args[0])
 		}
@@ -39,7 +42,11 @@ func (a *App) Run(args []string) {
 }
 
 func (a *App) list(path string) {
-	entries, err := a.Scanner.Scan(path)
+	options := filesystem.ScanOptions{
+		All: a.All,
+	}
+	
+	entries, err := a.Scanner.Scan(path, options)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return

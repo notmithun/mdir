@@ -1,6 +1,14 @@
 package filesystem
 
-import "os"
+import (
+	"os"
+
+	"github.com/notmithun/mdir/internal/platform"
+)
+
+type ScanOptions struct {
+	All bool
+}
 
 type Scanner struct{}
 
@@ -8,7 +16,7 @@ func NewScanner() *Scanner {
 	return &Scanner{}
 }
 
-func (s *Scanner) Scan(path string) ([]Entry, error) {
+func (s *Scanner) Scan(path string, options ScanOptions) ([]Entry, error) {
 	dirEntries, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
@@ -17,6 +25,10 @@ func (s *Scanner) Scan(path string) ([]Entry, error) {
 	entries := make([]Entry, 0, len(dirEntries))
 
 	for _, dirEntry := range dirEntries {
+		if !options.All && platform.IsHidden(dirEntry) {
+			continue
+		}
+
 		entry := Entry{
 			Name: dirEntry.Name(),
 		}
